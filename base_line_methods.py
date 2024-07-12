@@ -4,9 +4,16 @@ import networkx as nx
 
 ## First two are randomizing social networks: a specturm preserving approach 
 
-def simple_addDel(G, k_iter):
+def simple_addDel(G, args):
+    if(len(args) >= 1):
+        k_iter = int(args[0])
+    else:
+        print("Please specify a number of iterations")
+        exit(0)
+    
     n = len(G)
     G_new = nx.Graph(G)
+    mapping = {i : i for i in range(n) }
     edges = [edge for edge in G.edges]
     np.random.shuffle(edges) ## shuffle order 
     for k in range(k_iter):
@@ -20,7 +27,7 @@ def simple_addDel(G, k_iter):
                 break ## add line if G is directed 
         edges =  [edge for edge in G_new.edges]
         #np.random.shuffle(edges)
-    return G_new  
+    return G_new , mapping
 
 # def spectrum_addDel(G, epsilon):
 #     k = 0
@@ -29,7 +36,12 @@ def simple_addDel(G, k_iter):
 #     while(j2(k) <= 1 - epsilon):
 #         if(k==0 or k==1):
 
-def simple_swap(G, k_iter):
+def simple_swap(G, args):
+    if(len(args) >= 1):
+        k_iter = int(args[0])
+    else:
+        print("Please specify a number of iterations")
+        exit(0)
     n = len(G)
     G_new = nx.Graph(G)
     edges = [edge for edge in G.edges]
@@ -64,7 +76,7 @@ def simple_swap(G, k_iter):
                 print("Uh oh, couldn't find a valid edge to switch")
                 break 
         k += 1
-    return G_new
+    return G_new, {i : i for i in range(n)}
 
 #TODO sprectum preserving methods 
 
