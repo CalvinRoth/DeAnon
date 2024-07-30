@@ -10,7 +10,9 @@ import attack.distance_vec
 
 def naive_shuffle(G, args):
     n = len(G)
-    node_mapping = dict(zip(G.nodes(), sorted(G.nodes(), key=lambda k: np.random.random())))
+    new_nodes = [i for i in G.nodes]
+    np.random.shuffle(new_nodes)
+    node_mapping = dict(zip(G.nodes(), new_nodes))
     G_new = nx.relabel_nodes(G, node_mapping)
     #G_new = nx.empty_graph(n)
     return G_new, node_mapping
@@ -35,7 +37,8 @@ anon_algos = {"naive_shuffle" : (naive_shuffle, "None"),
                "swap" : (simple_swap, "kChanges")} 
 deanon_algos = {"distance-vec":(attack.distance_vec.distance_vector_method, "kSeeds")}
 util_algos = {"degree-dist" : (jointDegreeGraph, ""), 
-              "path-dist" : (jointShortestPath, "")}
+              "path-dist" : (jointShortestPath, ""),
+              "accuracy" : (accuracy, "Predicted-graph Answers.txt")}
 
 n_args = len(sys.argv)
 print(sys.argv)
@@ -68,8 +71,19 @@ if(sys.argv[1] == "-d"):
     if(n_args < 5):
         print("Specify an algorithm, a file, and an output location \n")
         exit(0)
-    if(sys.arg[2] in deanon_algos):
-        pass 
+    if(sys.argv[2] in deanon_algos):
+        G = nx.read_edgelist(sys.argv[3])
+        H = nx.read_edgelist(sys.argv[4])
+        output_name = sys.argv[-1]
+        if(n_args > 6): 
+            matching = deanon_algos[sys.argv[2]][0](G, H, sys.argv[5:-1])
+        else:
+            matching = deanon_algos[sys.argv[2]][0](G, [])     
+        with open(output_name + "/guess.txt", "w") as output:
+            for (u,v) in matching: 
+                output.write("%d %d\n" % (u,v))
+        print("Finished Algorithm")
+
 
 
 
@@ -85,3 +99,20 @@ if(sys.argv[1] == "-u"):
 
 if(sys.argv[1] == "-h"):
     help() 
+
+
+if(sys.argv[1] == "-c"):
+    if(n_args != 4):
+        print("specify answer key and guessed pairs")
+        exit(0)
+    predicted = []
+    answers = []
+    with open(sys.argv[2], "r") as input1:
+        for line in input1.readlines():
+            u,v = line.split(" ")
+            answers.append((int(u),int(v)))
+    with open(sys.argv[3], "r") as input1:
+        for line in input1.readlines():
+            u,v = line.split(" ")
+            predicted.append((int(u),int(v)))
+    print("Score of: %f \n" % accuracy(answers, predicted))

@@ -49,3 +49,21 @@ def jointShortestPath(G1, G2):
     plt.plot(spaths2, label="Degree Dist of G2")
     plt.legend()
     plt.show()
+
+def accuracy(answers, guesses):
+    n = len(answers)
+    m = len(answers)
+    answer = sorted(answers, key= lambda x : x[0])
+    guesss = sorted(guesses, key= lambda x : x[0])
+    answer_idx = [a[0] for a in answer]
+    guess_idx = [a[0] for a in guesses]
+    total = 0 
+    right = 0
+    wrong = 0
+    for i in range(max(m,n)):
+        if(i in answer_idx and i in guess_idx):
+            if(answer[i][1] == guesss[i][1]): 
+                right += 1 
+            else: wrong += 1
+        total += 1
+    return right/total 
