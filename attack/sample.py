@@ -1,6 +1,6 @@
 import numpy as np
 import networkx as nx
-import distance_vec as dist 
+import attack.distance_vec as dist 
 
 def invert(mapping):
     return {mapping[i] : i for i in mapping}
@@ -21,7 +21,7 @@ def MatchScore(G1, G2, mapping, node):
         for (x,y) in G2.edges():
             if(x != rnbr): continue
             if(y in mapping.items()): continue
-            scores[x] += 1/(G2.degree(y)**0.5)
+            scores[y] += 1/(G2.degree(y)**0.5)
     for (v, u) in G1.edges():
         if(v != node): continue
         if(u not in mapping): continue
@@ -29,7 +29,7 @@ def MatchScore(G1, G2, mapping, node):
         for (y,x) in G2.edges():
             if(x != rnbr): continue
             if(y in mapping.items()): continue
-            scores[x] += 1/(G2.degree(y)**0.5)
+            scores[x] += 1/(G2.degree(x)**0.5)
     return scores 
 
 
@@ -47,30 +47,36 @@ def propagationStep(G1, G2, mapping, theta=0.15):
         reverse_match = np.argmax(score)
         if(reverse_match == i): 
             mapping[i] = rnode 
-            print(i, rnode)
             change = True
     return mapping, change
     
 
 
 
-def deAnon(G1, G2, mapping, k_iters=20):
+def deAnon(G1, G2, mapping, k_iters=2000):
     for k in range(k_iters):
         mapping, change = propagationStep(G1, G2, mapping)
         if(not change): 
-            print(k)
             break
     return mapping
 
 
 
-# G1 = nx.read_adjlist("../../data/local_data.txt", nodetype=int)
-# G2 = nx.read_adjlist("../../data/social_network.txt", nodetype=int)
-G1 = nx.read_edgelist("../data/email-Eu-core.txt", nodetype=int)
-G2 = nx.read_edgelist("../results/anon_graph.txt", nodetype=int)
+#G1 = nx.read_edgelist("../data/email-Eu-core.txt", nodetype=int)
+#G2 = nx.read_edgelist("../data/email-Eu-core.txt", nodetype=int)
+# n = 100
+# A1 = np.zeros((n,n))
+# A2 = np.zeros((n,n))
+# for i in range(n-1):
+#     A1[i,i+1] = 1 
+# for i in range(n-1,0,-1):
+#     A2[i, i-1] = 1 
+# G1 = nx.DiGraph(A1)
+# G2 = nx.DiGraph(A2)
+# lands1 = [i for i in range(10)]
+# lands2 = [(n-1)-i for i in range(10)]
+# lands1 = dist.find_landmarks(G1, 40)
+# lands2 = dist.find_landmarks(G2, 40)
+# mapping = {lands1[i] : lands2[i] for i in range(10)}
 
-mapping = {i : i for i in range(15)}
-print(mapping)
-print("###########################")
-mapping = propagationStep(G1, G2, mapping,10000)
-print(mapping)
+# print(propagationStep(G1, G2, mapping))
