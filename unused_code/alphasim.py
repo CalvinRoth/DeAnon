@@ -1,7 +1,9 @@
 import numpy as np
 import networkx as nx 
-import pygmtools as pygm
 
+
+# This package is used to solve maximum matching problems
+import pygmtools as pygm
 pygm.set_backend('numpy')
 np.random.seed(0)
 

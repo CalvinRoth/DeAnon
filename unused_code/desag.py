@@ -1,5 +1,7 @@
 import numpy as np 
+import networkx as nx 
 import pygmtools as pygm 
+norm = np.linalg.norm
 
 
 def Delta(G1, mapping):

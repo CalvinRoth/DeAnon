@@ -22,11 +22,16 @@ def simple_addDel(G, args):
         while(True):
             i_p = np.random.randint(0,n)
             j_p = np.random.randint(0,n)
+            if(i_p not in G.nodes): print(i_p, "meeee")
+            if(j_p not in G.nodes): print(j_p, "hellp")
             if((i_p, j_p) not in G_new.edges): 
                 G_new.add_edge(i_p, j_p)
                 break ## add line if G is directed 
-        edges =  [edge for edge in G_new.edges]
-        #np.random.shuffle(edges)
+        edges.pop(k)
+        np.random.shuffle(edges)
+    diff = nx.adjacency_matrix(G) - nx.adjacency_matrix(G_new)
+    diff = diff * diff 
+    print("##########" + str(np.sum(diff)) + "##########")
     return G_new , mapping
 
 # def spectrum_addDel(G, epsilon):

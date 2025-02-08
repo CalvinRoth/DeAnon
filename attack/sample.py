@@ -2,6 +2,13 @@ import numpy as np
 import networkx as nx
 import attack.distance_vec as dist 
 
+""" Implementation of 
+De-anonymizing Social Networks by De-anonymizing Social Networks
+by Arvind Narayanan and Vitaly Shmatikov
+Most methods are a very direct translation of the paper's pseudo-code into python
+"""
+
+""" given a hashmap reverse the key-value pairs"""
 def invert(mapping):
     return {mapping[i] : i for i in mapping}
 
@@ -10,12 +17,13 @@ def eccentricity(scores):
     frst = np.max(scores)
     return (frst - snd)/np.std(scores)
 
+
 def MatchScore(G1, G2, mapping, node):
     n1 = len(G1)
     n2 = len(G2)
     scores = np.zeros((n2))
     for (u,v) in G1.edges():
-        if(v != node): continue ## write fasters
+        if(v != node): continue
         if(u not in mapping): continue
         rnbr = mapping[u]
         for (x,y) in G2.edges():
@@ -60,23 +68,3 @@ def deAnon(G1, G2, mapping, k_iters=2000):
             break
     return mapping
 
-
-
-#G1 = nx.read_edgelist("../data/email-Eu-core.txt", nodetype=int)
-#G2 = nx.read_edgelist("../data/email-Eu-core.txt", nodetype=int)
-# n = 100
-# A1 = np.zeros((n,n))
-# A2 = np.zeros((n,n))
-# for i in range(n-1):
-#     A1[i,i+1] = 1 
-# for i in range(n-1,0,-1):
-#     A2[i, i-1] = 1 
-# G1 = nx.DiGraph(A1)
-# G2 = nx.DiGraph(A2)
-# lands1 = [i for i in range(10)]
-# lands2 = [(n-1)-i for i in range(10)]
-# lands1 = dist.find_landmarks(G1, 40)
-# lands2 = dist.find_landmarks(G2, 40)
-# mapping = {lands1[i] : lands2[i] for i in range(10)}
-
-# print(propagationStep(G1, G2, mapping))

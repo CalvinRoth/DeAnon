@@ -1,7 +1,9 @@
 import networkx as nx 
 import numpy as np 
 import matplotlib.pyplot as plt 
+import scipy.stats
 
+## file for random utility functions 
 
 def to_matrix(D, ln):
     results = np.zeros((ln,ln))
@@ -13,6 +15,8 @@ def to_matrix(D, ln):
 def clustering(G):
     return nx.transitivity(G)
 
+
+
 def subgraph_centrality(G):
     pass 
 
@@ -23,6 +27,20 @@ def lambda1(G):
     vals = nx.linalg.adjacency_spectrum(G)
     return max(vals)
 
+## Computes the number of undirected triangles
+def number_triangles(G):
+   triangles = nx.triangles(G)
+   return sum([t for t in triangles.values()])
+
+def average_short(G):
+    all_paths = dict(nx.all_pairs_shortest_path_length(G))
+    total = 0 
+    count = 0
+    for node in G:
+        for v in all_paths[node]:
+            total += all_paths[node][v] 
+            count += 1
+    return total/count 
 
 ## 2nd largest eigenvalue of laplacian 
 def lap2(G):
@@ -67,3 +85,15 @@ def accuracy(answers, guesses):
             else: wrong += 1
         total += 1
     return right/total 
+
+
+### LOCAL METRICS 
+def degree_diff(G,H):
+    deq1 = sorted([i[1] for i in nx.degree(G)])
+    deq2 = sorted([i[1] for i in nx.degree(H)])
+    return scipy.stats.wasserstein_distance(deq1, deq2)
+
+def closeness(G,H):
+    close1 = sorted([i for i in nx.closeness_centrality(G).values()])
+    close2 = sorted([i for i in nx.closeness_centrality(H).values()])
+    return scipy.stats.wasserstein_distance(close1, close2)
